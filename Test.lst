@@ -1,0 +1,486 @@
+   1               		.file	"Test.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.global	initButtons
+  11               	initButtons:
+  12               	/* prologue: function */
+  13               	/* frame size = 0 */
+  14 0000 80E8      		ldi r24,lo8(-128)
+  15 0002 8093 0000 		sts scrollUpButton,r24
+  16 0006 80E4      		ldi r24,lo8(64)
+  17 0008 8093 0000 		sts scrollDownButton,r24
+  18 000c 82E0      		ldi r24,lo8(2)
+  19 000e 8093 0000 		sts selectButton,r24
+  20 0012 81E0      		ldi r24,lo8(1)
+  21 0014 8093 0000 		sts returnButton,r24
+  22               	/* epilogue start */
+  23 0018 0895      		ret
+  25               	.global	getButtonState
+  27               	getButtonState:
+  28               	/* prologue: function */
+  29               	/* frame size = 0 */
+  30 001a FC01      		movw r30,r24
+  31 001c 83B3      		in r24,51-32
+  32 001e 9081      		ld r25,Z
+  33 0020 8923      		and r24,r25
+  34 0022 01F0      		breq .L4
+  35 0024 80E0      		ldi r24,lo8(0)
+  36 0026 0895      		ret
+  37               	.L4:
+  38 0028 8FEF      		ldi r24,lo8(-1)
+  39 002a 0895      		ret
+  41               	.global	__vector_default
+  43               	__vector_default:
+  44 002c 1F92      		push __zero_reg__
+  45 002e 0F92      		push r0
+  46 0030 0FB6      		in r0,__SREG__
+  47 0032 0F92      		push r0
+  48 0034 1124      		clr __zero_reg__
+  49               	/* prologue: Signal */
+  50               	/* frame size = 0 */
+  51               	/* #APP */
+  52               	 ;  64 "Test.c" 1
+  53 0036 0000      		nop
+  54               	 ;  0 "" 2
+  55               	/* epilogue start */
+  56               	/* #NOAPP */
+  57 0038 0F90      		pop r0
+  58 003a 0FBE      		out __SREG__,r0
+  59 003c 0F90      		pop r0
+  60 003e 1F90      		pop __zero_reg__
+  61 0040 1895      		reti
+  63               	.global	main
+  65               	main:
+  66 0042 2F92      		push r2
+  67 0044 3F92      		push r3
+  68 0046 4F92      		push r4
+  69 0048 5F92      		push r5
+  70 004a 6F92      		push r6
+  71 004c 7F92      		push r7
+  72 004e 8F92      		push r8
+  73 0050 9F92      		push r9
+  74 0052 AF92      		push r10
+  75 0054 BF92      		push r11
+  76 0056 CF92      		push r12
+  77 0058 DF92      		push r13
+  78 005a EF92      		push r14
+  79 005c FF92      		push r15
+  80 005e 0F93      		push r16
+  81 0060 1F93      		push r17
+  82 0062 DF93      		push r29
+  83 0064 CF93      		push r28
+  84 0066 00D0      		rcall .
+  85 0068 00D0      		rcall .
+  86 006a CDB7      		in r28,__SP_L__
+  87 006c DEB7      		in r29,__SP_H__
+  88               	/* prologue: function */
+  89               	/* frame size = 4 */
+  90 006e 0E94 0000 		call uartInit
+  91 0072 0E94 0000 		call a2dInit
+  92 0076 0E94 0000 		call timerInit
+  93 007a 8D9A      		sbi 49-32,5
+  94 007c 8AE0      		ldi r24,lo8(10)
+  95 007e 90E0      		ldi r25,hi8(10)
+  96 0080 0E94 0000 		call timer1PWMInit
+  97 0084 8FEF      		ldi r24,lo8(-1)
+  98 0086 9FEF      		ldi r25,hi8(-1)
+  99 0088 0E94 0000 		call timer1PWMInitICR
+ 100 008c 80E0      		ldi r24,lo8(gs(uartSendByte))
+ 101 008e 90E0      		ldi r25,hi8(gs(uartSendByte))
+ 102 0090 0E94 0000 		call rprintfInit
+ 103 0094 80E8      		ldi r24,lo8(-128)
+ 104 0096 8093 0000 		sts scrollUpButton,r24
+ 105 009a 80E4      		ldi r24,lo8(64)
+ 106 009c 8093 0000 		sts scrollDownButton,r24
+ 107 00a0 82E0      		ldi r24,lo8(2)
+ 108 00a2 8093 0000 		sts selectButton,r24
+ 109 00a6 81E0      		ldi r24,lo8(1)
+ 110 00a8 8093 0000 		sts returnButton,r24
+ 111 00ac 0E94 0000 		call timer1PWMAOn
+ 112 00b0 8FEF      		ldi r24,lo8(32767)
+ 113 00b2 9FE7      		ldi r25,hi8(32767)
+ 114 00b4 0E94 0000 		call timer1PWMASet
+ 115 00b8 84B3      		in r24,52-32
+ 116 00ba 807F      		andi r24,lo8(-16)
+ 117 00bc 84BB      		out 52-32,r24
+ 118 00be 87B3      		in r24,55-32
+ 119 00c0 87BB      		out 55-32,r24
+ 120               	/* #APP */
+ 121               	 ;  100 "Test.c" 1
+ 122 00c2 0000      		nop
+ 123               	 ;  0 "" 2
+ 124               	/* #NOAPP */
+ 125 00c4 88B3      		in r24,56-32
+ 126 00c6 88BB      		out 56-32,r24
+ 127 00c8 5524      		clr r5
+ 128 00ca 4424      		clr r4
+ 129               	.L32:
+ 130 00cc 242D      		mov r18,r4
+ 131 00ce 30E0      		ldi r19,lo8(0)
+ 132 00d0 852D      		mov r24,r5
+ 133 00d2 9927      		clr r25
+ 134 00d4 87FD      		sbrc r24,7
+ 135 00d6 9095      		com r25
+ 136 00d8 2817      		cp r18,r24
+ 137 00da 3907      		cpc r19,r25
+ 138 00dc 01F0      		breq .L10
+ 139 00de 88E8      		ldi r24,lo8(5000)
+ 140 00e0 93E1      		ldi r25,hi8(5000)
+ 141               	.L11:
+ 142 00e2 E9E1      		ldi r30,lo8(25)
+ 143 00e4 F0E0      		ldi r31,hi8(25)
+ 144               	/* #APP */
+ 145               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 146 00e6 3197      		1: sbiw r30,1
+ 147 00e8 01F4      		brne 1b
+ 148               	 ;  0 "" 2
+ 149               	/* #NOAPP */
+ 150 00ea 0197      		sbiw r24,1
+ 151 00ec 01F4      		brne .L11
+ 152 00ee 452C      		mov r4,r5
+ 153               	.L10:
+ 154 00f0 0E94 0000 		call lcdClearDisplay
+ 155 00f4 80E0      		ldi r24,lo8(0)
+ 156 00f6 0E94 0000 		call a2dSetChannel
+ 157 00fa 80E0      		ldi r24,lo8(0)
+ 158 00fc 0E94 0000 		call a2dConvert10bit
+ 159 0100 7C01      		movw r14,r24
+ 160 0102 81E0      		ldi r24,lo8(1)
+ 161 0104 0E94 0000 		call a2dSetChannel
+ 162 0108 81E0      		ldi r24,lo8(1)
+ 163 010a 0E94 0000 		call a2dConvert10bit
+ 164 010e 5C01      		movw r10,r24
+ 165 0110 82E0      		ldi r24,lo8(2)
+ 166 0112 0E94 0000 		call a2dSetChannel
+ 167 0116 82E0      		ldi r24,lo8(2)
+ 168 0118 0E94 0000 		call a2dConvert10bit
+ 169 011c 9A83      		std Y+2,r25
+ 170 011e 8983      		std Y+1,r24
+ 171 0120 83E0      		ldi r24,lo8(3)
+ 172 0122 0E94 0000 		call a2dSetChannel
+ 173 0126 83E0      		ldi r24,lo8(3)
+ 174 0128 0E94 0000 		call a2dConvert10bit
+ 175 012c 1C01      		movw r2,r24
+ 176 012e 84E0      		ldi r24,lo8(4)
+ 177 0130 0E94 0000 		call a2dSetChannel
+ 178 0134 84E0      		ldi r24,lo8(4)
+ 179 0136 0E94 0000 		call a2dConvert10bit
+ 180 013a 9C83      		std Y+4,r25
+ 181 013c 8B83      		std Y+3,r24
+ 182 013e 00E0      		ldi r16,lo8(0)
+ 183 0140 10E0      		ldi r17,hi8(0)
+ 184 0142 C801      		movw r24,r16
+ 185 0144 B701      		movw r22,r14
+ 186 0146 0E94 0000 		call __floatunsisf
+ 187 014a 20E0      		ldi r18,lo8(0x3a800000)
+ 188 014c 30E0      		ldi r19,hi8(0x3a800000)
+ 189 014e 40E8      		ldi r20,hlo8(0x3a800000)
+ 190 0150 5AE3      		ldi r21,hhi8(0x3a800000)
+ 191 0152 0E94 0000 		call __mulsf3
+ 192 0156 20E0      		ldi r18,lo8(0x40a00000)
+ 193 0158 30E0      		ldi r19,hi8(0x40a00000)
+ 194 015a 40EA      		ldi r20,hlo8(0x40a00000)
+ 195 015c 50E4      		ldi r21,hhi8(0x40a00000)
+ 196 015e 0E94 0000 		call __mulsf3
+ 197 0162 26EC      		ldi r18,lo8(0x3f25dcc6)
+ 198 0164 3CED      		ldi r19,hi8(0x3f25dcc6)
+ 199 0166 45E2      		ldi r20,hlo8(0x3f25dcc6)
+ 200 0168 5FE3      		ldi r21,hhi8(0x3f25dcc6)
+ 201 016a 0E94 0000 		call __mulsf3
+ 202 016e 2AE7      		ldi r18,lo8(0x3f5b367a)
+ 203 0170 36E3      		ldi r19,hi8(0x3f5b367a)
+ 204 0172 4BE5      		ldi r20,hlo8(0x3f5b367a)
+ 205 0174 5FE3      		ldi r21,hhi8(0x3f5b367a)
+ 206 0176 0E94 0000 		call __subsf3
+ 207 017a 2FE1      		ldi r18,lo8(0x4163851f)
+ 208 017c 35E8      		ldi r19,hi8(0x4163851f)
+ 209 017e 43E6      		ldi r20,hlo8(0x4163851f)
+ 210 0180 51E4      		ldi r21,hhi8(0x4163851f)
+ 211 0182 0E94 0000 		call __mulsf3
+ 212 0186 3B01      		movw r6,r22
+ 213 0188 4C01      		movw r8,r24
+ 214 018a CC24      		clr r12
+ 215 018c DD24      		clr r13
+ 216 018e C601      		movw r24,r12
+ 217 0190 B501      		movw r22,r10
+ 218 0192 0E94 0000 		call __floatunsisf
+ 219 0196 20E0      		ldi r18,lo8(0x3a800000)
+ 220 0198 30E0      		ldi r19,hi8(0x3a800000)
+ 221 019a 40E8      		ldi r20,hlo8(0x3a800000)
+ 222 019c 5AE3      		ldi r21,hhi8(0x3a800000)
+ 223 019e 0E94 0000 		call __mulsf3
+ 224 01a2 23E3      		ldi r18,lo8(0x416b3333)
+ 225 01a4 33E3      		ldi r19,hi8(0x416b3333)
+ 226 01a6 4BE6      		ldi r20,hlo8(0x416b3333)
+ 227 01a8 51E4      		ldi r21,hhi8(0x416b3333)
+ 228 01aa 0E94 0000 		call __mulsf3
+ 229 01ae 20E0      		ldi r18,lo8(0x40a00000)
+ 230 01b0 30E0      		ldi r19,hi8(0x40a00000)
+ 231 01b2 40EA      		ldi r20,hlo8(0x40a00000)
+ 232 01b4 50E4      		ldi r21,hhi8(0x40a00000)
+ 233 01b6 0E94 0000 		call __mulsf3
+ 234 01ba 7B01      		movw r14,r22
+ 235 01bc 8C01      		movw r16,r24
+ 236 01be C401      		movw r24,r8
+ 237 01c0 B301      		movw r22,r6
+ 238 01c2 20E0      		ldi r18,lo8(0x41200000)
+ 239 01c4 30E0      		ldi r19,hi8(0x41200000)
+ 240 01c6 40E2      		ldi r20,hlo8(0x41200000)
+ 241 01c8 51E4      		ldi r21,hhi8(0x41200000)
+ 242 01ca 0E94 0000 		call __gtsf2
+ 243 01ce 1816      		cp __zero_reg__,r24
+ 244 01d0 04F4      		brge .L38
+ 245 01d2 C09A      		sbi 56-32,0
+ 246 01d4 00C0      		rjmp .L14
+ 247               	.L38:
+ 248 01d6 C098      		cbi 56-32,0
+ 249               	.L14:
+ 250 01d8 C801      		movw r24,r16
+ 251 01da B701      		movw r22,r14
+ 252 01dc 20E0      		ldi r18,lo8(0x41700000)
+ 253 01de 30E0      		ldi r19,hi8(0x41700000)
+ 254 01e0 40E7      		ldi r20,hlo8(0x41700000)
+ 255 01e2 51E4      		ldi r21,hhi8(0x41700000)
+ 256 01e4 0E94 0000 		call __gtsf2
+ 257 01e8 1816      		cp __zero_reg__,r24
+ 258 01ea 04F4      		brge .L39
+ 259 01ec C598      		cbi 56-32,5
+ 260 01ee 00C0      		rjmp .L17
+ 261               	.L39:
+ 262 01f0 C59A      		sbi 56-32,5
+ 263               	.L17:
+ 264 01f2 83B3      		in r24,51-32
+ 265 01f4 9091 0000 		lds r25,scrollUpButton
+ 266 01f8 8923      		and r24,r25
+ 267 01fa 01F4      		brne .L18
+ 268 01fc 5394      		inc r5
+ 269               	.L18:
+ 270 01fe 83B3      		in r24,51-32
+ 271 0200 9091 0000 		lds r25,scrollDownButton
+ 272 0204 8923      		and r24,r25
+ 273 0206 01F4      		brne .L19
+ 274 0208 5A94      		dec r5
+ 275               	.L19:
+ 276 020a 23E0      		ldi r18,lo8(3)
+ 277 020c 5216      		cp r5,r18
+ 278 020e 01F0      		breq .L24
+ 279 0210 2515      		cp r18,r5
+ 280 0212 04F0      		brlt .L28
+ 281 0214 31E0      		ldi r19,lo8(1)
+ 282 0216 5316      		cp r5,r19
+ 283 0218 01F0      		breq .L22
+ 284 021a 3515      		cp r19,r5
+ 285 021c 04F0      		brlt .L23
+ 286 021e 5520      		tst r5
+ 287 0220 01F0      		breq .L21
+ 288 0222 00C0      		rjmp .L20
+ 289               	.L28:
+ 290 0224 85E0      		ldi r24,lo8(5)
+ 291 0226 5816      		cp r5,r24
+ 292 0228 01F4      		brne .+2
+ 293 022a 00C0      		rjmp .L26
+ 294 022c 5816      		cp r5,r24
+ 295 022e 04F0      		brlt .L25
+ 296 0230 E6E0      		ldi r30,lo8(6)
+ 297 0232 5E16      		cp r5,r30
+ 298 0234 01F0      		breq .+2
+ 299 0236 00C0      		rjmp .L20
+ 300 0238 00C0      		rjmp .L41
+ 301               	.L21:
+ 302 023a C401      		movw r24,r8
+ 303 023c B301      		movw r22,r6
+ 304 023e 0E94 0000 		call lcdPrintStandBoostPressure
+ 305 0242 00C0      		rjmp .L29
+ 306               	.L22:
+ 307 0244 C401      		movw r24,r8
+ 308 0246 B301      		movw r22,r6
+ 309 0248 23E3      		ldi r18,lo8(0x416b3333)
+ 310 024a 33E3      		ldi r19,hi8(0x416b3333)
+ 311 024c 4BE6      		ldi r20,hlo8(0x416b3333)
+ 312 024e 51E4      		ldi r21,hhi8(0x416b3333)
+ 313 0250 0E94 0000 		call __divsf3
+ 314 0254 0E94 0000 		call lcdPrintMetricBoostPressure
+ 315 0258 00C0      		rjmp .L29
+ 316               	.L23:
+ 317 025a C801      		movw r24,r16
+ 318 025c B701      		movw r22,r14
+ 319 025e 0E94 0000 		call lcdPrintStandWaterPressure
+ 320 0262 00C0      		rjmp .L29
+ 321               	.L24:
+ 322 0264 C801      		movw r24,r16
+ 323 0266 B701      		movw r22,r14
+ 324 0268 23E3      		ldi r18,lo8(0x416b3333)
+ 325 026a 33E3      		ldi r19,hi8(0x416b3333)
+ 326 026c 4BE6      		ldi r20,hlo8(0x416b3333)
+ 327 026e 51E4      		ldi r21,hhi8(0x416b3333)
+ 328 0270 0E94 0000 		call __divsf3
+ 329 0274 0E94 0000 		call lcdPrintMetricWaterPressure
+ 330 0278 00C0      		rjmp .L29
+ 331               	.L25:
+ 332 027a 2981      		ldd r18,Y+1
+ 333 027c 3A81      		ldd r19,Y+2
+ 334 027e B901      		movw r22,r18
+ 335 0280 80E0      		ldi r24,lo8(0)
+ 336 0282 90E0      		ldi r25,hi8(0)
+ 337 0284 0E94 0000 		call __floatunsisf
+ 338 0288 20E0      		ldi r18,lo8(0x3a800000)
+ 339 028a 30E0      		ldi r19,hi8(0x3a800000)
+ 340 028c 40E8      		ldi r20,hlo8(0x3a800000)
+ 341 028e 5AE3      		ldi r21,hhi8(0x3a800000)
+ 342 0290 0E94 0000 		call __mulsf3
+ 343 0294 20E0      		ldi r18,lo8(0x40a00000)
+ 344 0296 30E0      		ldi r19,hi8(0x40a00000)
+ 345 0298 40EA      		ldi r20,hlo8(0x40a00000)
+ 346 029a 50E4      		ldi r21,hhi8(0x40a00000)
+ 347 029c 0E94 0000 		call __mulsf3
+ 348 02a0 2AE9      		ldi r18,lo8(0x3f19999a)
+ 349 02a2 39E9      		ldi r19,hi8(0x3f19999a)
+ 350 02a4 49E1      		ldi r20,hlo8(0x3f19999a)
+ 351 02a6 5FE3      		ldi r21,hhi8(0x3f19999a)
+ 352 02a8 0E94 0000 		call __divsf3
+ 353 02ac 20E0      		ldi r18,lo8(0x40300000)
+ 354 02ae 30E0      		ldi r19,hi8(0x40300000)
+ 355 02b0 40E3      		ldi r20,hlo8(0x40300000)
+ 356 02b2 50E4      		ldi r21,hhi8(0x40300000)
+ 357 02b4 0E94 0000 		call __subsf3
+ 358 02b8 AB01      		movw r20,r22
+ 359 02ba BC01      		movw r22,r24
+ 360 02bc 80E0      		ldi r24,lo8(0)
+ 361 02be 00C0      		rjmp .L40
+ 362               	.L26:
+ 363 02c0 B101      		movw r22,r2
+ 364 02c2 80E0      		ldi r24,lo8(0)
+ 365 02c4 90E0      		ldi r25,hi8(0)
+ 366 02c6 0E94 0000 		call __floatunsisf
+ 367 02ca 20E0      		ldi r18,lo8(0x3a800000)
+ 368 02cc 30E0      		ldi r19,hi8(0x3a800000)
+ 369 02ce 40E8      		ldi r20,hlo8(0x3a800000)
+ 370 02d0 5AE3      		ldi r21,hhi8(0x3a800000)
+ 371 02d2 0E94 0000 		call __mulsf3
+ 372 02d6 20E0      		ldi r18,lo8(0x40a00000)
+ 373 02d8 30E0      		ldi r19,hi8(0x40a00000)
+ 374 02da 40EA      		ldi r20,hlo8(0x40a00000)
+ 375 02dc 50E4      		ldi r21,hhi8(0x40a00000)
+ 376 02de 0E94 0000 		call __mulsf3
+ 377 02e2 2AE9      		ldi r18,lo8(0x3f19999a)
+ 378 02e4 39E9      		ldi r19,hi8(0x3f19999a)
+ 379 02e6 49E1      		ldi r20,hlo8(0x3f19999a)
+ 380 02e8 5FE3      		ldi r21,hhi8(0x3f19999a)
+ 381 02ea 0E94 0000 		call __divsf3
+ 382 02ee 20E0      		ldi r18,lo8(0x40300000)
+ 383 02f0 30E0      		ldi r19,hi8(0x40300000)
+ 384 02f2 40E3      		ldi r20,hlo8(0x40300000)
+ 385 02f4 50E4      		ldi r21,hhi8(0x40300000)
+ 386 02f6 0E94 0000 		call __subsf3
+ 387 02fa AB01      		movw r20,r22
+ 388 02fc BC01      		movw r22,r24
+ 389 02fe 81E0      		ldi r24,lo8(1)
+ 390 0300 00C0      		rjmp .L40
+ 391               	.L41:
+ 392 0302 EB81      		ldd r30,Y+3
+ 393 0304 FC81      		ldd r31,Y+4
+ 394 0306 BF01      		movw r22,r30
+ 395 0308 80E0      		ldi r24,lo8(0)
+ 396 030a 90E0      		ldi r25,hi8(0)
+ 397 030c 0E94 0000 		call __floatunsisf
+ 398 0310 20E0      		ldi r18,lo8(0x3a800000)
+ 399 0312 30E0      		ldi r19,hi8(0x3a800000)
+ 400 0314 40E8      		ldi r20,hlo8(0x3a800000)
+ 401 0316 5AE3      		ldi r21,hhi8(0x3a800000)
+ 402 0318 0E94 0000 		call __mulsf3
+ 403 031c 20E0      		ldi r18,lo8(0x40a00000)
+ 404 031e 30E0      		ldi r19,hi8(0x40a00000)
+ 405 0320 40EA      		ldi r20,hlo8(0x40a00000)
+ 406 0322 50E4      		ldi r21,hhi8(0x40a00000)
+ 407 0324 0E94 0000 		call __mulsf3
+ 408 0328 2AE9      		ldi r18,lo8(0x3f19999a)
+ 409 032a 39E9      		ldi r19,hi8(0x3f19999a)
+ 410 032c 49E1      		ldi r20,hlo8(0x3f19999a)
+ 411 032e 5FE3      		ldi r21,hhi8(0x3f19999a)
+ 412 0330 0E94 0000 		call __divsf3
+ 413 0334 20E0      		ldi r18,lo8(0x40300000)
+ 414 0336 30E0      		ldi r19,hi8(0x40300000)
+ 415 0338 40E3      		ldi r20,hlo8(0x40300000)
+ 416 033a 50E4      		ldi r21,hhi8(0x40300000)
+ 417 033c 0E94 0000 		call __subsf3
+ 418 0340 AB01      		movw r20,r22
+ 419 0342 BC01      		movw r22,r24
+ 420 0344 82E0      		ldi r24,lo8(2)
+ 421               	.L40:
+ 422 0346 0E94 0000 		call lcdPrintAccelAxis
+ 423 034a 00C0      		rjmp .L29
+ 424               	.L20:
+ 425 034c F6E0      		ldi r31,lo8(6)
+ 426 034e F515      		cp r31,r5
+ 427 0350 04F0      		brlt .L30
+ 428 0352 5524      		clr r5
+ 429 0354 00C0      		rjmp .L29
+ 430               	.L30:
+ 431 0356 86E0      		ldi r24,lo8(6)
+ 432 0358 582E      		mov r5,r24
+ 433               	.L29:
+ 434 035a 88E8      		ldi r24,lo8(5000)
+ 435 035c 93E1      		ldi r25,hi8(5000)
+ 436               	.L31:
+ 437 035e E9E1      		ldi r30,lo8(25)
+ 438 0360 F0E0      		ldi r31,hi8(25)
+ 439               	/* #APP */
+ 440               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 441 0362 3197      		1: sbiw r30,1
+ 442 0364 01F4      		brne 1b
+ 443               	 ;  0 "" 2
+ 444               	/* #NOAPP */
+ 445 0366 0197      		sbiw r24,1
+ 446 0368 01F4      		brne .L31
+ 447 036a 00C0      		rjmp .L32
+ 449               		.comm scrollUpButton,1,1
+ 450               		.comm scrollDownButton,1,1
+ 451               		.comm selectButton,1,1
+ 452               		.comm returnButton,1,1
+ 453               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:00000000 Test.c
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:2      *ABS*:0000003f __SREG__
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:3      *ABS*:0000003e __SP_H__
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:4      *ABS*:0000003d __SP_L__
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:5      *ABS*:00000034 __CCP__
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:11     .text:00000000 initButtons
+                            *COM*:00000001 scrollUpButton
+                            *COM*:00000001 scrollDownButton
+                            *COM*:00000001 selectButton
+                            *COM*:00000001 returnButton
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:27     .text:0000001a getButtonState
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:43     .text:0000002c __vector_default
+C:\Users\Kaleb\AppData\Local\Temp/ccHvPk5i.s:65     .text:00000042 main
+
+UNDEFINED SYMBOLS
+uartInit
+a2dInit
+timerInit
+timer1PWMInit
+timer1PWMInitICR
+uartSendByte
+rprintfInit
+timer1PWMAOn
+timer1PWMASet
+lcdClearDisplay
+a2dSetChannel
+a2dConvert10bit
+__floatunsisf
+__mulsf3
+__subsf3
+__gtsf2
+lcdPrintStandBoostPressure
+__divsf3
+lcdPrintMetricBoostPressure
+lcdPrintStandWaterPressure
+lcdPrintMetricWaterPressure
+lcdPrintAccelAxis
+__do_clear_bss
